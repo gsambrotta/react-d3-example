@@ -3,6 +3,8 @@ import d3 from 'd3';
 
 import Histogram from '../Histogram';
 
+require('../Histogram/style.scss');
+
 class H1BGraph extends Component {
 	constructor(props) {
 		super(props);

@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import d3 from 'd3';
 
+import Axis from './Axis';
+
+
 class Histogram extends Component {
 	constructor(props) {
 		super(props);
@@ -54,11 +57,13 @@ class Histogram extends Component {
 		let translate = `translate(0, ${this.props.topMargin})`;
 		let bars = this.histogram(this.props.data);
 
+		// ::this.makeBar is ES7 way of this.makeBar.bind(this)
 		return (
 			<g className='histogram' transform={translate}>
 				<g className='bars'>
-					{bars.map(::this.makeBar)} //ES7 this.makeBar.bind(this)
+					{bars.map(::this.makeBar)}
 				</g>
+				<Axis {...this.props} data={bars} />
 			</g>
 		)
 	}
@@ -67,10 +72,10 @@ class Histogram extends Component {
 // Subcomponent HistogramBar
 const HistogramBar = (props) => {
 	let translate = `translate(${props.x}, ${props.y})`;
-	let label = `${props.percent.toFixed(0)} %`;
+	let label = `${props.percent.toFixed(0)}%`;
 
 	if(props.percent < 1 ) {
-		label = `${props.percent.toFixed(2)} %`;
+		label = `${props.percent.toFixed(2)}%`;
 	}
 
 	if (props.width < 20) {

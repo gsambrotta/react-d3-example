@@ -32,7 +32,7 @@ module.exports = {
     },
     {
       test: /\.scss$/,
-      loader: "stye-loader!css!sass-loader"
+      loader: "style-loader!css-loader!sass-loader"
     }]
   }
 };
