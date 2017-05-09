@@ -10,6 +10,8 @@ class Controls extends Component {
 		this.state = {
 			yearFilter: () => true,
 			year: '*',
+			UsstateFilter: () => true,
+			USstate: '*',
 		};
 	}
 
@@ -25,11 +27,22 @@ class Controls extends Component {
 		this.setState({yearFilter: filter, year: year});
 	}
 
+	updateUSStateFilter(USstate, reset) {
+		let filter = (d) => d.state == USstate;
+
+		if(reset || !USstate) {
+			filter = () => true;
+			USstate = '*'
+		}
+
+		this.setState({UsstateFilter: filter, USstate: USstate});
+	}
+
 	componentDidUpdate(prevProps, prevState) {
 		this.props.updateDataFilter(
 			// filter wrapped in a function
 			((filters) => {
-				return (d) => filters.yearFilter(d);
+				return (d) => filters.yearFilter(d) && filters.UsstateFilter(d)
 			})(this.state)
 		);
 	}
@@ -44,8 +57,8 @@ class Controls extends Component {
 
 	render() {
 		let getYears = (data) => {
-			// _.keys -> dictionary's keys/gruoupBy's keys
-			// _.gruoupBy -> dictionary of years as keys
+			// _.keys -> dictionary's keys/groupBy's keys
+			// _.groupBy -> dictionary of years as keys
 			// .map(Number) make sure they are all numbers.
 			// return: i.e. [2009, 2010, 2011, 2012, 2013, 2014]
 			return _.keys(_.groupBy(data,
@@ -53,11 +66,20 @@ class Controls extends Component {
       				.map(Number);
 		}
 
+		let getState = (data) => {
+			return _.sortBy(_.keys( _.groupBy(data, (d) => d.state)));
+		}
+
 		return (
 			<div>
 				<ControlRow data={this.props.data}
 										getToggleNames={getYears}
 										updateDataFilter={ ::this.updateYearFilter }
+				/>
+				<ControlRow data={this.props.data}
+										getToggleNames={getState}
+										updateDataFilter={ ::this.updateUSStateFilter }
+										capitalize='true'
 				/>
 			</div>
 		)
