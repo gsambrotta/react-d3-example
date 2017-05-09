@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import d3 from 'd3';
 
 import Histogram from '../Histogram';
+import Controls from './Controls';
 
 require('../Histogram/style.scss');
 
@@ -10,7 +11,8 @@ class H1BGraph extends Component {
 		super(props);
 
 		this.state = {
-			rawData: []
+			rawData: [],
+			dataFilter: () => true
 		};
 	}
 
@@ -19,11 +21,11 @@ class H1BGraph extends Component {
 	}
 
 	cleanJobs() {
-		console.log('hello');
+		//console.log('cleanJobs function');
 	}
 
 	loadRawData() {
-		let dateFormat = d3.time.format('%m%d%Y');
+		let dateFormat = d3.time.format('%m/%d/%Y');
 
 		d3.csv(this.props.url)
 			// callbacks that tell how to change every row
@@ -54,6 +56,10 @@ class H1BGraph extends Component {
 			})
 	}
 
+	updateDataFilter(filter) {
+		this.setState({dataFilter: filter});
+	}
+
 	render() {
 		if (!this.state.rawData.length) {
       return (
@@ -72,11 +78,15 @@ class H1BGraph extends Component {
     };
     let fullWidth = 700;
 
+    let filteredData = this.state.rawData.filter(this.state.dataFilter);
+
 		return (
 				<div>
 					<svg width={fullWidth} height={params.height}>
-						<Histogram { ...params} data={this.state.rawData} />
+						<Histogram { ...params} data={filteredData} />
 					</svg>
+
+					<Controls data={this.state.rawData} updateDataFilter={::this.updateDataFilter} />
 				</div>
 		);
 	}
