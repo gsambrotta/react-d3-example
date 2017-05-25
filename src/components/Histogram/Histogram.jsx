@@ -9,7 +9,7 @@ class Histogram extends Component {
 		super(props);
 
 		this.histogram = d3.layout.histogram();
-		this.widthScale = d3.scale.linear();
+		this.widthScale = d3.scale.linear(); //scale data to 1:1 or to the propotion indicate
 		this.yScale = d3.scale.linear();
 
 		this.update_d3(props);
@@ -27,14 +27,16 @@ class Histogram extends Component {
 		let bars = this.histogram(props.data);
 		let counts = bars.map((d) => d.y );
 		let thicknessInPosition = bars.map((d) => d.x + d.dx);
+		const maxNumbCounts = d3.max(counts);
+		const minNumbCounts = d3.min(counts);
 
 		this.widthScale
-				.domain([d3.min(counts), d3.max(counts)])
-				.range([9, props.width - props.axisMargin]);
+				.domain([minNumbCounts, maxNumbCounts]) // range di data di partenza (i.e.: 0, 10000)
+				.range([9, props.width - props.axisMargin]); // range di data a cui vogliamo arrivare (i.e.: 0, 100)
 
 		this.yScale
 				.domain([0, d3.max(thicknessInPosition) ]) // we use x value in yScale because is horizontal histogram
-				.range([0, props.height-props.topMargin-props.bottomMargin]); //chart dimension properties
+				.range([0, props.height-props.topMargin-props.bottomMargin]); // chart dimension properties
 	}
 
 	makeBar(bar) {
@@ -43,7 +45,7 @@ class Histogram extends Component {
 		let props = {
 			percent: percent,
 			x: this.props.axisMargin,
-			y: this.yScale(bar.x), // yScale is not a function !! ?
+			y: this.yScale(bar.x), // yScale is not a function?? yes, d3.scale.linear is a function
 			width: this.widthScale(bar.y),
 			height: this.yScale(bar.dx),
 			key: `histogram-bar-${bar.x}-${bar.y}`

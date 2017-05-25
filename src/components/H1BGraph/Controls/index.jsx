@@ -48,7 +48,7 @@ class Controls extends Component {
 	}
 
 	// if we don't write this, it will goes in infinite loop
-	// because when react re-render (componentDidUpdate) it do a superficial comparison of this.state.
+	// because when react re-render (componentDidUpdate) it does a superficial comparison of this.state.
 	// to prevent infinite loop, we need a better check, so we build our own.
 	shouldComponentUpdate(nextProps, nextState) {
 		// component update just if the two state are actually different.
